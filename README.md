@@ -20,6 +20,12 @@ npm run dev
 yarn dev
 ```
 
+Building static files for S3
+
+```bash
+npm run build
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 Healthcheck can be accessed on [http://localhost:3000/api/health](http://localhost:3000/api/health). This endpoint can be edited in `pages/api/health.ts`.
