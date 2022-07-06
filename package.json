@@ -9,9 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@material-ui/core": "^4.12.4",
+    "@mui/material": "^5.8.7",
+    "axios": "^0.27.2",
     "next": "12.1.6",
+    "qpp-measures-data": "^5.5.4",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-data-table-component": "^7.5.2",
+    "react-dom": "18.2.0",
+    "styled-components": "^5.3.5"
   },
   "devDependencies": {
     "@types/node": "18.0.0",
