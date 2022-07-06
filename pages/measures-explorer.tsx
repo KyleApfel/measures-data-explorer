@@ -174,21 +174,16 @@ const MeasuresExplorer: NextPage<Props> = () => {
 
 const getMeasuresData = async (performanceYear: Number) => {
   const { data } = await axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/measures/' + performanceYear + '/measures-data.json');
-  console.log("again",performanceYear)
+
   return {
       measures: data,
       year: performanceYear,
       total_measure_count: data.length,
-      total_quality_measure_count: data.filter((x: any): any => x.category == 'quality').length,
-      total_pi_measure_count: data.filter((x: any): any => x.category == 'pi').length,
-      total_ia_measure_count: data.filter((x: any): any => x.category == 'ia').length,
-      total_cost_measure_count: data.filter((x: any): any => x.category == 'cost').length
+      total_quality_measure_count: data.filter((x: Measure): any => x.category == 'quality').length,
+      total_pi_measure_count: data.filter((x: Measure): any => x.category == 'pi').length,
+      total_ia_measure_count: data.filter((x: Measure): any => x.category == 'ia').length,
+      total_cost_measure_count: data.filter((x: Measure): any => x.category == 'cost').length
    }
 };
-
-// MeasuresExplorer.getInitialProps = async () => {
-//   const { data } = await axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/measures/2021/measures-data.json');
-//   return { measures: data };
-// }
 
 export default MeasuresExplorer
