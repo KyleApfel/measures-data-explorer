@@ -20,15 +20,15 @@ npm run dev
 yarn dev
 ```
 
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
 Building static files for S3
 
 ```bash
 npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-Healthcheck can be accessed on [http://localhost:3000/api/health](http://localhost:3000/api/health). This endpoint can be edited in `pages/api/health.ts`.
+Healthcheck can be accessed on [http://localhost:3000/api/health](http://localhost:3000/api/health). This endpoint can be edited in `pages/api/health.ts`. (Not accessible via static build)
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
