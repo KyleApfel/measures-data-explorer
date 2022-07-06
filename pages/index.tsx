@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Footer from '../components/Footer'
+import Link from 'next/link'
 
 const Home: NextPage = () => {
   return (
@@ -15,7 +16,7 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="/measures-explorer">Measures Explorer!</a>
+          Welcome to <Link href={"/measures-explorer"}><a>Measures Explorer!</a></Link>
         </h1>
 
       </main>
