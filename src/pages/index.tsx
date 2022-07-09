@@ -9,7 +9,7 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Measures Data Explorer</title>
         <meta name="description" content="Measures Explorer" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -16,6 +16,7 @@
     "axios": "^0.27.2",
     "next": "12.1.6",
     "qpp-measures-data": "^5.5.4",
+    "qpp-style": "^9.16.9",
     "react": "18.2.0",
     "react-data-table-component": "^7.5.2",
     "react-dom": "18.2.0",
