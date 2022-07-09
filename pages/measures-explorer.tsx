@@ -8,7 +8,7 @@ import Link from 'next/link'
 import {Button} from "@material-ui/core";
 import Footer from '../components/Footer'
 import DataTable from 'react-data-table-component';
-import {Box, Checkbox, FormControlLabel, FormGroup, Grid, Paper} from "@mui/material";
+import {Box, Checkbox, FormControlLabel, FormGroup, Grid, Paper, TextField} from "@mui/material";
 
 interface Props {
   measures?: any;
@@ -20,6 +20,7 @@ interface Props {
 }
 
 interface Measure {
+  measureId: string;
   category: string;
 }
 
@@ -69,6 +70,7 @@ const defaultState = {
     total_ia_measure_count: 0,
     total_cost_measure_count: 0
   },
+  measure_filter: '',
   quality_filter: true,
   pi_filter: true,
   ia_filter: true,
@@ -86,6 +88,10 @@ const MeasuresExplorer: NextPage<Props> = () => {
     // @ts-ignore
     newState[key] = !data[key]
     setData( {...data, ...newState})
+  }
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setData({...data, 'measure_filter': event.target.value });
   };
 
   useEffect(() => {
@@ -136,6 +142,10 @@ const MeasuresExplorer: NextPage<Props> = () => {
               <p>Total IA Measure Count: { data.measuresData.total_ia_measure_count }</p>
               <p>Total Cost Measure Count: { data.measuresData.total_cost_measure_count }</p>
               <h2><p>Filters:</p></h2>
+              <p><TextField id="outlined-basic" label="Measure Id"
+                            value={data.measure_filter}
+                            onChange={handleSearchChange}
+                            variant="outlined" /></p>
               <FormGroup>
                 <FormControlLabel control={<Checkbox checked={data.quality_filter}
                                                      onChange={() => toggleFilterCheck("quality_filter")} />}
@@ -153,6 +163,7 @@ const MeasuresExplorer: NextPage<Props> = () => {
               <DataTable
               columns={columns}
               data={ data.measuresData.measures
+                .filter((x:Measure) => (data.measure_filter == '') ? true : x.measureId.includes(data.measure_filter))
                 .filter((x:Measure) => (data.quality_filter) ? true : x.category != "quality" )
                 .filter((x:Measure) => (data.pi_filter) ? true : x.category != "pi" )
                 .filter((x:Measure) => (data.ia_filter) ? true : x.category != "ia" )
