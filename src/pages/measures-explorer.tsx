@@ -36,32 +36,32 @@ interface Measure {
 const columns = [
   {
     name: 'Measure Id',
-    selector: (row:Measure) => row.measureId,
+    selector: (row:any) => row.measureId,
     sortable: true
   }
   ,{
     name: 'First Performance Year',
-    selector: (row:Measure) => row.firstPerformanceYear,
+    selector: (row:any) => row.firstPerformanceYear,
     sortable: true
   }
   ,{
     name: 'Category',
-    selector: (row:Measure) => row.category,
+    selector: (row:any) => row.category,
     sortable: true
   }
   ,{
     name: 'Metric Type',
-    selector: (row:Measure) => row.metricType,
+    selector: (row:any) => row.metricType,
     sortable: true
   }
   ,{
     name: 'Measure Type',
-    selector: (row:Measure) => row.measureType,
+    selector: (row:any) => row.measureType,
     sortable: true
   }
   ,{
     name: 'Inverse Measure',
-    selector: (row:Measure) => row.isInverse,
+    selector: (row:any) => row.isInverse,
     sortable: true
   }
 ]
