@@ -3,15 +3,6 @@ import axios from "axios";
 import {useMemo} from "react";
 import AppStore from "./app.store";
 
-interface IMeasure {
-    measureId: string;
-    category: string;
-    firstPerformanceYear: string;
-    metricType: string;
-    measureType: string;
-    isInverse: boolean;
-}
-
 const MeasuresDataStrata = types.model({
     description: "",
     eMeasureUuids: types.optional(types.model({
@@ -71,16 +62,6 @@ const Measure = types.model({
     }))
 })
 
-export const defaultMeasuresSnapshot = {
-    measures: [],
-    year: 1969,
-    total_measure_count: 0,
-    total_quality_measure_count: 0,
-    total_pi_measure_count: 0,
-    total_ia_measure_count: 0,
-    total_cost_measure_count: 0
-}
-
 const MeasuresData = types.model({
     measures: types.array(Measure),
     year: 2021,
@@ -111,9 +92,28 @@ const MeasuresData = types.model({
   }
 )
 
-let store: IMeasureStore | undefined
+export const defaultMeasuresSnapshot = {
+    measures: [],
+    year: 1969,
+    total_measure_count: 0,
+    total_quality_measure_count: 0,
+    total_pi_measure_count: 0,
+    total_ia_measure_count: 0,
+    total_cost_measure_count: 0
+}
 
+interface IMeasure {
+    measureId: string;
+    category: string;
+    firstPerformanceYear: string;
+    metricType: string;
+    measureType: string;
+    isInverse: boolean;
+}
+
+let store: IMeasureStore | undefined
 export type IMeasureStore = Instance<typeof MeasuresData>
+
 
 export function initializeStore(snapshot = null) {
     const _store = store ?? MeasuresData.create(defaultMeasuresSnapshot)
