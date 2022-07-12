@@ -86,14 +86,14 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
     total_quality_measure_count,
     total_ia_measure_count,
     total_pi_measure_count,
-    total_cost_measure_count
+    total_cost_measure_count,
+    measures_loading
   } = useStore(props.store)
 
   const router = useRouter();
   const performanceYear = (router.query.performanceYear != undefined) ? router.query.performanceYear : 2021
 
   const [data, setData] = useState(defaultState)
-  const [isLoading, setLoading] = useState(false)
 
   const toggleFilterCheck = (key: String) => {
     const newState = {}
@@ -107,10 +107,8 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
   };
 
   useEffect(() => {
-    setLoading(true)
     const _year = (!router.isReady) ? 2021 : parseInt(performanceYear as string)
     getMeasuresData(_year)
-    setLoading(false)
   }, [performanceYear])
 
   const HeadContent: JSX.Element = (
@@ -203,7 +201,7 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
       <main className={styles.main}>
         { PerformanceYearButtons }
 
-        { (isLoading) ?
+        { (measures_loading) ?
           <>{ Loading }</> :
           (
             <Box sx={{ flexGrow: 1, width: '100%'}}>

@@ -38,10 +38,15 @@ const MeasuresData = types.model({
     total_quality_measure_count: 0,
     total_pi_measure_count: 0,
     total_ia_measure_count: 0,
-    total_cost_measure_count: 0
+    total_cost_measure_count: 0,
+    measures_loading: true
   }).actions((self) => {
       const getMeasuresData = flow(function* (performanceYear: number) {
+          if (performanceYear == self.year) { return }
+
+          self.measures_loading = true
           const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/measures/' + performanceYear + '/measures-data.json');
+          self.measures_loading = false
 
           self.measures = data
           self.year = performanceYear
