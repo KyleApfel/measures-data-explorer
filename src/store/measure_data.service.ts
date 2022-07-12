@@ -12,16 +12,66 @@ interface IMeasure {
     isInverse: boolean;
 }
 
-const Measure = types.model({
-    measureId: "",
-    category: "",
-    firstPerformanceYear: 1969,
-    metricType: "",
-    measureType: "",
-    isInverse: false
+const MeasuresDataStrata = types.model({
+    description: "",
+    eMeasureUuids: types.optional(types.model({
+        initialPopulationUuid: "",
+        denominatorUuid: "",
+        numeratorUuid: "",
+        denominatorExclusionUuid: ""
+    }), {})
 })
 
-export const defaultMeasuresData = {
+const Measure = types.model({
+    title: "",
+    eMeasureId: types.optional(types.maybeNull(types.string), ""),
+    nqfId: types.maybeNull(types.string),
+    nqfEMeasureId: types.maybeNull(types.string),
+    eMeasureUuid: types.optional(types.string, ""),
+    measureId: "",
+    category: "",
+    description: "",
+    nationalQualityStrategyDomain: types.maybeNull(types.string),
+    primarySteward: "",
+    firstPerformanceYear: 1969,
+    lastPerformanceYear: types.maybeNull(types.number),
+    metricType: "",
+    measureType: "",
+    isInverse: false,
+    isHighPriority: false,
+    isClinicalGuidelineChanged: false,
+    isRegistryMeasure: false,
+    isRiskAdjusted: false,
+    isIcdImpacted: false,
+    icdImpacted: types.array(types.string),
+    clinicalGuidelineChanged: types.array(types.string),
+    allowedPrograms: types.array(types.string),
+    submissionMethods: types.array(types.string),
+    measureSets: types.array(types.string),
+    measureSpecification: types.maybeNull(types.model({
+        default: ""
+    })),
+    strata: types.array(MeasuresDataStrata),
+    cpcPlusGroup: "",
+    eligibilityOptions: types.array(types.model({
+        diagnosisCodes: types.array(types.string),
+        maxAge: 0,
+        minAge: 0,
+        optionGroup: "",
+        procedureCodes: types.array(types.model({
+            code: ""
+        }))
+    })),
+    performanceOptions: types.array(types.model({
+        optionGroup: "",
+        optionType: "",
+        qualityCodes: types.array(types.model({
+            code: ""
+        }))
+    }))
+})
+
+export const defaultMeasuresSnapshot = {
     measures: [],
     year: 1969,
     total_measure_count: 0,
@@ -66,7 +116,7 @@ let store: IMeasureStore | undefined
 export type IMeasureStore = Instance<typeof MeasuresData>
 
 export function initializeStore(snapshot = null) {
-    const _store = store ?? MeasuresData.create(defaultMeasuresData)
+    const _store = store ?? MeasuresData.create(defaultMeasuresSnapshot)
 
     // hydrated here
     if (snapshot) {

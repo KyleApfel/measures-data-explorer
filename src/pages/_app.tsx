@@ -1,7 +1,7 @@
 import '../styles/globals.scss'
 import type { AppProps } from 'next/app'
 import { Provider } from "mobx-react";
-import { useStore } from '../store/measure_data.store'
+import { useStore } from '../store/measure_data.service'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const store = useStore(pageProps.initialState)

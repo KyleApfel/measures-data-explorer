@@ -10,7 +10,7 @@ import Footer from '../components/Footer'
 import DataTable from 'react-data-table-component';
 import {Box, Checkbox, CircularProgress, FormControlLabel, FormGroup, Grid, Paper, TextField} from "@mui/material";
 
-import {initializeStore, IMeasureStore, useStore} from "../store/measure_data.store";
+import {initializeStore, IMeasureStore, useStore} from "../store/measure_data.service";
 import { getSnapshot } from 'mobx-state-tree'
 import {observer} from "mobx-react-lite";
 
