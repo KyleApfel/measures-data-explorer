@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import {types, getSnapshot, Instance, SnapshotIn, SnapshotOut, applySnapshot, castToSnapshot} from "mobx-state-tree";
-import MeasuresData, {defaultMeasuresData} from "./measure_data.service";
+import MeasuresData from "./measure_data.service";
 
 const AppStore = types.model({
   measuresData: types.map(MeasuresData)
