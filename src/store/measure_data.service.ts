@@ -39,9 +39,9 @@ const Measure = types.model({
     allowedPrograms: types.array(types.string),
     submissionMethods: types.array(types.string),
     measureSets: types.array(types.string),
-    measureSpecification: types.maybeNull(types.model({
+    measureSpecification: types.maybeNull(types.union(types.model({
         default: ""
-    })),
+    }),types.string)),
     strata: types.array(MeasuresDataStrata),
     cpcPlusGroup: "",
     eligibilityOptions: types.array(types.model({
