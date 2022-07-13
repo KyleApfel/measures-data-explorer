@@ -10,27 +10,12 @@ import Footer from '../components/Footer'
 import DataTable from 'react-data-table-component';
 import {Box, Checkbox, CircularProgress, FormControlLabel, FormGroup, Grid, Paper, TextField} from "@mui/material";
 
-import {initializeStore, IMeasureStore, useStore} from "../store/measure_data.service";
+import { initializeStore, IMeasureStore, useStore, IMeasure } from "../store/measure_data.service";
 import { getSnapshot } from 'mobx-state-tree'
 import {observer} from "mobx-react-lite";
 
 interface Props {
-  store?: IMeasureStore,
-  measures?: Measure;
-  total_measure_count?: Number;
-  total_quality_measure_count?: Number;
-  total_pi_measure_count?: Number;
-  total_ia_measure_count?: Number;
-  total_cost_measure_count?: Number;
-}
-
-interface Measure {
-  measureId: string;
-  category: string;
-  firstPerformanceYear: string;
-  metricType: string;
-  measureType: string;
-  isInverse: boolean;
+  store?: IMeasureStore
 }
 
 const columns = [

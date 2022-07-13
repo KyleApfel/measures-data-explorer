@@ -102,14 +102,8 @@ export const defaultMeasuresSnapshot = {
     total_cost_measure_count: 0
 }
 
-interface IMeasure {
-    measureId: string;
-    category: string;
-    firstPerformanceYear: string;
-    metricType: string;
-    measureType: string;
-    isInverse: boolean;
-}
+// Can convert Mobx-State-Tree models to Typescript model. Cool!
+export type IMeasure = Instance<typeof Measure>
 
 let store: IMeasureStore | undefined
 export type IMeasureStore = Instance<typeof MeasuresData>
