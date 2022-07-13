@@ -2,6 +2,7 @@ import {types, getSnapshot, applySnapshot, Instance, flow} from "mobx-state-tree
 import axios from "axios";
 import {useMemo} from "react";
 import AppStore from "./app.store";
+import makeInspectable from 'mobx-devtools-mst';
 
 const MeasuresDataStrata = types.model({
     description: "",
@@ -62,7 +63,7 @@ const Measure = types.model({
     }))
 })
 
-const MeasuresData = types.model({
+const MeasuresData = types.model("MeasuresData",{
     measures: types.array(Measure),
     year: 2021,
     total_measure_count: 0,
@@ -111,6 +112,7 @@ export type IMeasureStore = Instance<typeof MeasuresData>
 
 export function initializeStore(snapshot = null) {
     const _store = store ?? MeasuresData.create(defaultMeasuresSnapshot)
+    makeInspectable(_store) // Should not be enabled in PROD
 
     // hydrated here
     if (snapshot) {
