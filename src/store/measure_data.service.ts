@@ -4,103 +4,102 @@ import {useMemo} from "react";
 import AppStore from "./app.store";
 import makeInspectable from 'mobx-devtools-mst';
 
-const MeasuresDataStrata = types.model({
-    description: "",
-    eMeasureUuids: types.optional(types.model({
-        initialPopulationUuid: "",
-        denominatorUuid: "",
-        numeratorUuid: "",
-        denominatorExclusionUuid: ""
-    }), {})
-})
-
 const Measure = types.model({
-    title: "",
+    title: types.maybe(types.string),
     eMeasureId: types.optional(types.maybeNull(types.string), ""),
     nqfId: types.maybeNull(types.string),
     nqfEMeasureId: types.maybeNull(types.string),
     eMeasureUuid: types.optional(types.string, ""),
-    measureId: "",
-    category: "",
-    description: "",
+    measureId: types.maybe(types.string),
+    category: types.maybe(types.string),
+    description: types.maybe(types.string),
     nationalQualityStrategyDomain: types.maybeNull(types.string),
-    primarySteward: "",
-    firstPerformanceYear: 1969,
+    primarySteward: types.maybe(types.string),
+    firstPerformanceYear: types.maybe(types.number),
     lastPerformanceYear: types.maybeNull(types.number),
-    metricType: "",
-    measureType: "",
-    isInverse: false,
-    isHighPriority: false,
-    isClinicalGuidelineChanged: false,
-    isRegistryMeasure: false,
-    isRiskAdjusted: false,
-    isIcdImpacted: false,
-    icdImpacted: types.array(types.string),
+    metricType: types.maybe(types.string),
+    measureType: types.maybe(types.string),
+    isInverse: types.maybe(types.boolean),
+    isHighPriority: types.maybe(types.boolean),
+    isClinicalGuidelineChanged: types.maybe(types.boolean),
+    isRegistryMeasure: types.maybe(types.boolean),
+    isRiskAdjusted: types.maybe(types.boolean),
+    isIcdImpacted: types.maybe(types.boolean),
+    icdImpacted: types.maybe(types.array(types.string)),
     clinicalGuidelineChanged: types.array(types.string),
     allowedPrograms: types.array(types.string),
     submissionMethods: types.array(types.string),
     measureSets: types.array(types.string),
     measureSpecification: types.maybeNull(types.union(types.model({
-        default: ""
+        default: types.maybe(types.string)
     }),types.string)),
-    strata: types.array(MeasuresDataStrata),
-    cpcPlusGroup: "",
+    strata: types.array(types.model({
+        description: types.maybe(types.string),
+        eMeasureUuids: types.optional(types.model({
+            initialPopulationUuid: types.maybe(types.string),
+            denominatorUuid: types.maybe(types.string),
+            numeratorUuid: types.maybe(types.string),
+            denominatorExclusionUuid: types.maybe(types.string)
+        }), {})
+    })),
+    cpcPlusGroup: types.maybe(types.string),
     eligibilityOptions: types.array(types.model({
         diagnosisCodes: types.array(types.string),
-        maxAge: 0,
-        minAge: 0,
-        optionGroup: "",
+        maxAge: types.maybe(types.number),
+        minAge: types.maybe(types.number),
+        optionGroup: types.maybe(types.string),
         procedureCodes: types.array(types.model({
-            code: ""
+            code: types.maybe(types.string)
         }))
     })),
     performanceOptions: types.array(types.model({
-        optionGroup: "",
-        optionType: "",
+        optionGroup: types.maybe(types.string),
+        optionType: types.maybe(types.string),
         qualityCodes: types.array(types.model({
-            code: ""
+            code: types.maybe(types.string)
         }))
     }))
 })
 
-const MeasuresData = types.model("MeasuresData",{
+const MeasuresData = types.model("MeasuresData", {
     measures: types.array(Measure),
     year: 2021,
-    total_measure_count: 0,
-    total_quality_measure_count: 0,
-    total_pi_measure_count: 0,
-    total_ia_measure_count: 0,
-    total_cost_measure_count: 0,
     measures_loading: true
-  }).actions((self) => {
-      const getMeasuresData = flow(function* (performanceYear: number) {
-          if (performanceYear == self.year) { return }
+  }).views((self) => ({
+    get total_measure_count() {
+        return self.measures.length
+    },
+    get total_quality_measure_count() {
+        return self.measures.filter(m => m.category == 'quality').length
+    },
+    get total_pi_measure_count() {
+        return self.measures.filter(m => m.category == 'pi' || m.category == 'aci').length
+    },
+    get total_ia_measure_count() {
+        return self.measures.filter(m => m.category == 'ia').length
+    },
+    get total_cost_measure_count() {
+        return self.measures.filter(m => m.category == 'cost').length
+    },
+})).actions((self) => {
+   const getMeasuresData = flow(function* (performanceYear: number) {
+       if (performanceYear == self.year) { return }
 
-          self.measures_loading = true
-          const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/measures/' + performanceYear + '/measures-data.json');
-          self.measures_loading = false
+       self.measures_loading = true
+       const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/measures/' + performanceYear + '/measures-data.json');
+       self.measures_loading = false
 
-          self.measures = data
-          self.year = performanceYear
-          self.total_measure_count = data.length
-          self.total_quality_measure_count = data.filter((x: IMeasure): any => x.category == 'quality').length
-          self.total_pi_measure_count = data.filter((x: IMeasure): any => x.category == 'pi').length
-          self.total_ia_measure_count = data.filter((x: IMeasure): any => x.category == 'ia').length
-          self.total_cost_measure_count = data.filter((x: IMeasure): any => x.category == 'cost').length
-      })
+       self.measures = data
+       self.year = performanceYear
+   })
 
-    return { getMeasuresData }
+   return { getMeasuresData }
   }
 )
 
 export const defaultMeasuresSnapshot = {
     measures: [],
-    year: 1969,
-    total_measure_count: 0,
-    total_quality_measure_count: 0,
-    total_pi_measure_count: 0,
-    total_ia_measure_count: 0,
-    total_cost_measure_count: 0
+    year: 1969
 }
 
 // Can convert Mobx-State-Tree models to Typescript model. Cool!
