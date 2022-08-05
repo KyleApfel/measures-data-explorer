@@ -2,7 +2,6 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import styles from '../styles/Home.module.scss'
-import axios from "axios";
 import {useEffect, useState } from "react";
 import Link from 'next/link'
 import {Button} from "@material-ui/core";
@@ -10,8 +9,7 @@ import Footer from '../components/Footer'
 import DataTable from 'react-data-table-component';
 import {Box, Checkbox, CircularProgress, FormControlLabel, FormGroup, Grid, Paper, TextField} from "@mui/material";
 
-import { initializeStore, IMeasureStore, useStore, IMeasure } from "../store/measure_data.service";
-import { getSnapshot } from 'mobx-state-tree'
+import { IMeasureStore, useStore } from "../store/measure_data.service";
 import {observer} from "mobx-react-lite";
 
 interface Props {
