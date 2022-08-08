@@ -124,6 +124,7 @@ const MeasuresData = types.model("MeasuresData", {
       })
 
     const getMvpData = flow(function* (performanceYear: number) {
+        if (self.mvps.length !== 0 ) return
         self.measures_loading = true
         const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/experimental/mvp_source_data/mvps/' + performanceYear + '/mvps-data.json')
         self.measures_loading = false
@@ -143,7 +144,12 @@ const MeasuresData = types.model("MeasuresData", {
         self.measures_loading = false
     }
 
-      return { getMeasuresData, getMvpData, addBlankMvp, removeMvp }
+    const updateMvp = (id: String, data: iMvpVO) => {
+        const mvpIndex = self.mvps.findIndex((element, index) => (element.mvpId === id))
+        self.mvps[mvpIndex] = MvpVO.create(data)
+    }
+
+      return { getMeasuresData, getMvpData, addBlankMvp, removeMvp, updateMvp }
   }
 )
 
