@@ -18,6 +18,9 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>
           Welcome to <Link href={"/measures-explorer"}><a>Measures Explorer!</a></Link>
         </h1>
+        <h2 className={styles.title}>
+          ...and <Link href={"/mvp-factory"}><a>MVP Factory</a></Link>
+        </h2>
 
       </main>
       <Footer/>
