@@ -176,6 +176,9 @@ const MvpFactory: NextPage<Props> = observer((props) => {
   const ExportBoxComp: JSX.Element = (
     <Box sx={{ flexGrow: 1, width: "60%"}}>
       <h3>JSON Export: </h3>
+      <Button onClick={() =>  navigator.clipboard.writeText(JSON.stringify(mvps, null, 2))}>
+        Copy To Clipboard
+      </Button>
       <TextField
         id="filled-multiline-flexible"
         label="JSON Export"
@@ -207,7 +210,7 @@ const MvpFactory: NextPage<Props> = observer((props) => {
           </h2>
         </Box>
         { (measures_loading) ? LoadingComp : MvpTableComp }
-        { (!measures_loading) ? ExportBoxComp : (<></>) }
+        { (measures_loading) ? LoadingComp : ExportBoxComp }
       </main>
       <Footer/>
     </div>

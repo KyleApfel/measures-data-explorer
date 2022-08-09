@@ -140,6 +140,7 @@ const MeasuresData = types.model("MeasuresData", {
 
     const removeMvp = (id: String) => {
         self.measures_loading = true
+        // @ts-ignore
         self.mvps = self.mvps.filter((mvp: iMvpVO) => mvp.mvpId !== id)
         self.measures_loading = false
     }
