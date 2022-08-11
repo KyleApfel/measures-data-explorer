@@ -7,7 +7,7 @@ import Link from 'next/link'
 import {Button} from "@material-ui/core";
 import Footer from '../components/Footer'
 import DataTable from 'react-data-table-component';
-import {Box, Checkbox, CircularProgress, FormControlLabel, FormGroup, Grid, Paper, TextField} from "@mui/material";
+import {Box, Checkbox, CircularProgress, FormControlLabel, FormGroup, Grid, Container, Paper, TextField, Chip} from "@mui/material";
 
 import { IMeasureStore, useStore } from "../store/measure_data.service";
 import {observer} from "mobx-react-lite";
@@ -103,39 +103,43 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
   )
 
   const PerformanceYearButtons: JSX.Element = (
-    <Box sx={{ flexGrow: 1 }}>
+    <Container sx={{ flexGrow: 1 }}>
       <Grid container spacing={0}>
         { [2017,2018,2019,2020,2021,2022].map((year) => {
           return (
             <Grid item xs={2} key={year}>
-              <Link href={'/measures-explorer?performanceYear=' + year}><Button>{year}</Button></Link>
+              <Link href={'/measures-explorer?performanceYear=' + year}><Button variant="outlined">{year}</Button></Link>
             </Grid>
           )
         })}
       </Grid>
-    </Box>
+    </Container>
   )
 
   const Stats: JSX.Element = (
-    <>
-      <h1><p>Performance Year: { performanceYear }</p></h1>
+    <Paper elevation={12}>
+      <Container maxWidth="xl">
+      <h1>Performance Year: { performanceYear }</h1>
       <h2><p>Stats:</p></h2>
-      <p>Total Measure Count: { total_measure_count }</p>
-      <p>Total Quality Measure Count: { total_quality_measure_count }</p>
-      <p>Total PI Measure Count: { total_pi_measure_count }</p>
-      <p>Total IA Measure Count: { total_ia_measure_count }</p>
-      <p>Total Cost Measure Count: { total_cost_measure_count }</p>
-    </>
+      <Chip label={"Total Measure Count: " + total_measure_count }/>
+      <Chip label={"Total Quality Measure Count: " + total_quality_measure_count }/>
+      <Chip label={"Total PI Measure Count: " + total_pi_measure_count }/>
+      <Chip label={"Total IA Measure Count: " + total_ia_measure_count }/>
+      <Chip label={"Total Cost Measure Count: " + total_cost_measure_count }/>
+      </Container>
+    </Paper>
   )
 
   const Filters: JSX.Element = (
-   <>
+   <Paper elevation={12}>
+     <Container maxWidth="xl">
      <h2><p>Filters:</p></h2>
      <><TextField id="outlined-basic" label="Measure Id"
                    value={data.measure_filter}
                    onChange={handleSearchChange}
                    variant="outlined" /></>
-     <FormGroup>
+       <p></p>
+     <FormGroup row={true}>
        <FormControlLabel control={<Checkbox checked={data.quality_filter}
                                             onChange={() => toggleFilterCheck("quality_filter")} />}
                          label="Quality Measures" />
@@ -148,15 +152,20 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
        <FormControlLabel control={<Checkbox checked={data.cost_filter}
                                             onChange={() => toggleFilterCheck("cost_filter")} />}
                          label="Cost Measures" />
+       <p></p>
      </FormGroup>
-   </>
+       <p></p>
+     </Container>
+   </Paper>
   )
 
   const Loading: JSX.Element = (
-    <Box sx={{ flexGrow: 1}}>
-      <p>Loading...</p>
-      <p><CircularProgress color="success" /></p>
-    </Box>
+      <Paper elevation={12}>
+        <Box sx={{ flexGrow: 1}}>
+          <p>Loading...</p>
+          <p><CircularProgress color="success" /></p>
+        </Box>
+      </Paper>
   )
 
   const MeasureTable: JSX.Element = (
@@ -182,18 +191,22 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
       </Head>
 
       <main className={styles.main}>
+        <Container maxWidth="xl">
         { PerformanceYearButtons }
 
         { (measures_loading) ?
           <>{ Loading }</> :
           (
-            <Box sx={{ flexGrow: 1, width: '100%'}}>
-              { Stats }
-              { Filters }
-              { MeasureTable }
-            </Box>
+            <Paper elevation={12}>
+              <Box sx={{ flexGrow: 1, width: '100%'}}>
+                { Stats }
+                { Filters }
+                { MeasureTable }
+              </Box>
+            </Paper>
           )
         }
+        </Container>
       </main>
       <Footer/>
     </div>
