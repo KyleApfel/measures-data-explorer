@@ -1,10 +1,39 @@
 import {types, getSnapshot, applySnapshot, Instance, flow} from "mobx-state-tree";
 import axios from "axios";
 import {useMemo} from "react";
-import AppStore from "./app.store";
 import makeInspectable from 'mobx-devtools-mst';
 
-const Measure = types.model({
+const defaultMvpVO = {
+    mvpId: "Placeholder",
+    shortTitle: "",
+    title: "",
+    description: "",
+    specialityMostApplicableTo: [],
+    clinicalTopics: "",
+    qualityMeasuresIds: [],
+    iaMeasureIds: [],
+    costMeasureIds: [],
+    foundationPiMeasureIds: [],
+    foundationQualityMeasureIds: []
+}
+
+const MvpVO = types.model({
+    mvpId: types.string,
+    shortTitle: types.string,
+    title: types.string,
+    description: types.string,
+    specialtyMostApplicableTo: types.array(types.string),
+    clinicalTopics: types.string,
+    qualityMeasureIds: types.array(types.string),
+    iaMeasureIds: types.array(types.string),
+    costMeasureIds: types.array(types.string),
+    foundationPiMeasureIds: types.array(types.string),
+    foundationQualityMeasureIds: types.array(types.string)
+})
+
+export type iMvpVO = Instance<typeof MvpVO>
+
+const MeasureVO = types.model({
     title: types.maybe(types.string),
     eMeasureId: types.optional(types.maybeNull(types.string), ""),
     nqfId: types.maybeNull(types.string),
@@ -62,10 +91,11 @@ const Measure = types.model({
 })
 
 const MeasuresData = types.model("MeasuresData", {
-    measures: types.array(Measure),
+    measures: types.array(MeasureVO),
+    mvps: types.array(MvpVO),
     year: 2021,
     measures_loading: true
-  }).views((self) => ({
+}).views((self) => ({
     get total_measure_count() {
         return self.measures.length
     },
@@ -82,28 +112,56 @@ const MeasuresData = types.model("MeasuresData", {
         return self.measures.filter(m => m.category == 'cost').length
     },
 })).actions((self) => {
-   const getMeasuresData = flow(function* (performanceYear: number) {
-       if (performanceYear == self.year) { return }
+      const getMeasuresData = flow(function* (performanceYear: number) {
+          if (performanceYear == self.year) { return }
 
-       self.measures_loading = true
-       const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/measures/' + performanceYear + '/measures-data.json');
-       self.measures_loading = false
+          self.measures_loading = true
+          const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/measures/' + performanceYear + '/measures-data.json');
+          self.measures_loading = false
 
-       self.measures = data
-       self.year = performanceYear
-   })
+          self.measures = data
+          self.year = performanceYear
+      })
 
-   return { getMeasuresData }
+    const getMvpData = flow(function* (performanceYear: number) {
+        if (self.mvps.length !== 0 ) return
+        self.measures_loading = true
+        const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/experimental/mvp_source_data/mvps/' + performanceYear + '/mvps-data.json')
+        self.measures_loading = false
+
+        self.mvps = data
+    })
+
+    const addBlankMvp = () => {
+        self.measures_loading = true
+        self.mvps.push(MvpVO.create(defaultMvpVO))
+        self.measures_loading = false
+    }
+
+    const removeMvp = (id: String) => {
+        self.measures_loading = true
+        // @ts-ignore
+        self.mvps = self.mvps.filter((mvp: iMvpVO) => mvp.mvpId !== id)
+        self.measures_loading = false
+    }
+
+    const updateMvp = (id: String, data: iMvpVO) => {
+        const mvpIndex = self.mvps.findIndex((element, index) => (element.mvpId === id))
+        self.mvps[mvpIndex] = MvpVO.create(data)
+    }
+
+      return { getMeasuresData, getMvpData, addBlankMvp, removeMvp, updateMvp }
   }
 )
 
 export const defaultMeasuresSnapshot = {
     measures: [],
+    mvps: [],
     year: 1969
 }
 
 // Can convert Mobx-State-Tree models to Typescript model. Cool!
-export type IMeasure = Instance<typeof Measure>
+export type IMeasure = Instance<typeof MeasureVO>
 
 let store: IMeasureStore | undefined
 export type IMeasureStore = Instance<typeof MeasuresData>

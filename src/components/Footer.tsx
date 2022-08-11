@@ -8,7 +8,7 @@ export default function Footer() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Made By Kyle Apfel
+        Made With ❤️
       </a>
     </footer>
   )
