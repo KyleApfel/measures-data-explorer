@@ -4,10 +4,9 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.scss'
 import {useEffect, useState } from "react";
 import Link from 'next/link'
-import {Button} from "@material-ui/core";
 import Footer from '../components/Footer'
 import DataTable from 'react-data-table-component';
-import {Box, Checkbox, CircularProgress, OutlinedInput, FormHelperText, FormGroup, Grid, Paper, TextField} from "@mui/material";
+import {Box, Button, CircularProgress, OutlinedInput, FormHelperText, TextField, Container, Paper} from "@mui/material";
 import { useForm } from 'react-hook-form'
 import FormControl, { useFormControl } from '@mui/material/FormControl';
 
@@ -59,57 +58,58 @@ const MvpFactory: NextPage<Props> = observer((props) => {
 
 // @ts-ignore
   const ExpandedComponent = ({ data }) => {
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, formState: { errors }} = useForm()
     return (
       <Box sx={{flexGrow: 1, width: "95%", paddingLeft: "5%"}}>
         <form onSubmit={ handleSubmit(onSubmit) }>
-          <input type="hidden" {...register("mvpId")} defaultValue={data.mvpId} />
+          <input type="hidden" {...register("mvpId",{ required: true })} defaultValue={data.mvpId} />
           <label>
-            <FormHelperText>Mvp Id:</FormHelperText>
-            <OutlinedInput key={data.mvpId} fullWidth {...register("newMvpId")} defaultValue={data.mvpId}/>
+            <FormHelperText>Mvp Id: {errors?.newMvpId && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <OutlinedInput key={data.mvpId} fullWidth {...register("newMvpId",{ required: true })} defaultValue={data.mvpId}/>
           </label>
           <label>
-            <FormHelperText>Short Title:</FormHelperText>
-            <OutlinedInput fullWidth {...register("shortTitle")} defaultValue={data.shortTitle}/>
+            <FormHelperText>Short Title: {errors?.shortTitle && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("shortTitle",{ required: true})} defaultValue={data.shortTitle}/>
           </label>
           <label>
-            <FormHelperText>Title:</FormHelperText>
-            <OutlinedInput fullWidth {...register("title")} defaultValue={data.title}/>
+            <FormHelperText>Title: {errors?.title && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("title",{ required: true })} defaultValue={data.title}/>
           </label>
           <label>
-            <FormHelperText>Description:</FormHelperText>
-            <OutlinedInput fullWidth {...register("description")} defaultValue={data.description}/>
+            <FormHelperText>Description: {errors?.description && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("description",{ required: true })} defaultValue={data.description}/>
           </label>
           <label>
-            <FormHelperText>Speciality Most Applicable To:</FormHelperText>
-            <OutlinedInput fullWidth {...register("specialtyMostApplicableTo")} defaultValue={data.specialtyMostApplicableTo}/>
+            <FormHelperText>Speciality Most Applicable To: {errors?.specialtyMostApplicableTo && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("specialtyMostApplicableTo",{ required: true })} defaultValue={data.specialtyMostApplicableTo}/>
           </label>
           <label>
-            <FormHelperText>Clinical Topics:</FormHelperText>
-            <OutlinedInput fullWidth {...register("clinicalTopics")} defaultValue={data.clinicalTopics}/>
+            <FormHelperText>Clinical Topics: {errors?.clinicalTopics && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("clinicalTopics",{ required: true })} defaultValue={data.clinicalTopics}/>
           </label>
           <label>
-            <FormHelperText>Quality Measure Ids:</FormHelperText>
-            <OutlinedInput fullWidth {...register("qualityMeasureIds")} defaultValue={data.qualityMeasureIds}/>
+            <FormHelperText>Quality Measure Ids (Comma Separated): {errors?.qualityMeasureIds && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("qualityMeasureIds",{ required: true, pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/ })} defaultValue={data.qualityMeasureIds}/>
           </label>
           <label>
-            <FormHelperText>Foundation PI Measure Ids:</FormHelperText>
-            <OutlinedInput fullWidth {...register("foundationPiMeasureIds")} defaultValue={data.foundationPiMeasureIds}/>
+            <FormHelperText>Foundation PI Measure Ids (Comma Separated): {errors?.foundationPiMeasureIds && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("foundationPiMeasureIds",{ required: true,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/})} defaultValue={data.foundationPiMeasureIds}/>
           </label>
           <label>
-            <FormHelperText>IA Measure Ids:</FormHelperText>
-            <OutlinedInput fullWidth {...register("iaMeasureIds")} defaultValue={data.iaMeasureIds}/>
+            <FormHelperText>IA Measure Ids (Comma Separated): {errors?.iaMeasureIds && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("iaMeasureIds",{ required: true,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/})} defaultValue={data.iaMeasureIds}/>
           </label>
           <label>
-            <FormHelperText>Cost Measure Ids:</FormHelperText>
-            <OutlinedInput fullWidth {...register("costMeasureIds")} defaultValue={data.costMeasureIds}/>
+            <FormHelperText>Cost Measure Ids (Comma Separated): {errors?.costMeasureIds && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("costMeasureIds",{ required: true,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/})} defaultValue={data.costMeasureIds}/>
           </label>
           <label>
-            <FormHelperText>Foundation Quality Measure Ids:</FormHelperText>
-            <OutlinedInput fullWidth {...register("foundationQualityMeasureIds")} defaultValue={data.foundationQualityMeasureIds}/>
+            <FormHelperText>Foundation Quality Measure Ids (Comma Separated): {errors?.foundationQualityMeasureIds && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("foundationQualityMeasureIds",{ required: true,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/})} defaultValue={data.foundationQualityMeasureIds}/>
           </label>
           <p></p>
-          <Button style={{backgroundColor: "green", color: "white"}} type="submit" value="Submit">Submit</Button>
+          <Button variant="contained" color="success" type="submit" value="Save">Submit</Button>
+          <p></p>
         </form>
       </Box>
     )
@@ -157,32 +157,40 @@ const MvpFactory: NextPage<Props> = observer((props) => {
       wrap: true
     },
     {
+      name: 'System Generated Measure Ids',
+      selector: (row:any) => row.foundationQualityMeasureIds.join(', '),
+      sortable: false,
+      wrap: true
+    },
+    {
       name: 'Add/Remove',
       cell: (row:any) => (AddRemoveComp(row.mvpId))
     }
   ]
   const MvpTableComp: JSX.Element = (
-    <Box sx={{ flexGrow: 1, width: '100%'}}>
-      <DataTable
-        columns={columns}
-        data={ mvps }
-        selectableRows
-        expandableRows
-        expandableRowsComponent={ExpandedComponent}
-      />
-    </Box>
+    <Paper elevation={12}>
+      <Box sx={{ flexGrow: 1, width: '100%'}}>
+        <DataTable
+          columns={columns}
+          data={ mvps }
+          expandableRows
+          expandableRowsComponent={ExpandedComponent}
+        />
+      </Box>
+    </Paper>
   )
 
   const ExportBoxComp: JSX.Element = (
     <Box sx={{ flexGrow: 1, width: "60%"}}>
       <h3>JSON Export: </h3>
-      <Button onClick={() =>  navigator.clipboard.writeText(JSON.stringify(mvps, null, 2))}>
+      <Button variant="outlined" color="primary" onClick={() =>  navigator.clipboard.writeText(JSON.stringify(mvps, null, 2))}>
         Copy To Clipboard
       </Button>
       <TextField
         id="filled-multiline-flexible"
         label="JSON Export"
         multiline
+        maxRows={25}
         fullWidth
         value={JSON.stringify(mvps, null, 2)}
         variant="filled"
@@ -192,8 +200,8 @@ const MvpFactory: NextPage<Props> = observer((props) => {
 
   const AddRemoveComp = (id: String): JSX.Element => { return (
     <>
-      <Button style={{backgroundColor: "green", color: "white"}} onClick={(x) => addBlankMvp() }>+</Button>
-      <Button style={{backgroundColor: "red", color: "white"}} onClick={(x) => removeMvp(id)}>-</Button>
+      <Button size="small" variant="contained" color="success" onClick={(x) => addBlankMvp() }><h1>+</h1></Button>
+      <Button size="small" variant="contained" color="error" onClick={(x) => removeMvp(id)}><h1>-</h1></Button>
     </>
   )}
 
@@ -204,13 +212,17 @@ const MvpFactory: NextPage<Props> = observer((props) => {
       </Head>
 
       <main className={styles.main}>
-        <Box sx={{flexGrow: 0.3}}>
-          <h2 className={styles.title}>
-            🏭 MVP Factory 🏭
-          </h2>
-        </Box>
+        <Container maxWidth="xl">
+        <Paper elevation={12}>
+          <Box sx={{flexGrow: 0.3}}>
+            <h2 className={styles.title}>
+              🏭 MVP Factory 🏭
+            </h2>
+          </Box>
+        </Paper>
         { (measures_loading) ? LoadingComp : MvpTableComp }
         { (measures_loading) ? LoadingComp : ExportBoxComp }
+        </Container>
       </main>
       <Footer/>
     </div>

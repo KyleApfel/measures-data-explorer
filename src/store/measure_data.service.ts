@@ -4,7 +4,7 @@ import {useMemo} from "react";
 import makeInspectable from 'mobx-devtools-mst';
 
 const defaultMvpVO = {
-    mvpId: "Placeholder",
+    mvpId: "G006X",
     shortTitle: "",
     title: "",
     description: "",
