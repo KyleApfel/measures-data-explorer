@@ -6,7 +6,17 @@ import {useEffect, useState } from "react";
 import Link from 'next/link'
 import Footer from '../components/Footer'
 import DataTable from 'react-data-table-component';
-import {Box, Button, CircularProgress, OutlinedInput, FormHelperText, TextField, Container, Paper} from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  OutlinedInput,
+  FormHelperText,
+  TextField,
+  Container,
+  Paper,
+  AppBar, Toolbar, IconButton, Typography
+} from "@mui/material";
 import { useForm } from 'react-hook-form'
 import FormControl, { useFormControl } from '@mui/material/FormControl';
 
@@ -215,12 +225,18 @@ const MvpFactory: NextPage<Props> = observer((props) => {
         <Container maxWidth="xl">
         <Paper elevation={12}>
           <Box sx={{flexGrow: 0.3}}>
-            <h2 className={styles.title}>
-              🏭 MVP Factory 🏭
-            </h2>
+            <AppBar position="static">
+              <Toolbar>
+                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                  MVP Factory 🏭
+                </Typography>
+                <h3>Other Tools:</h3><Link href={"/measures-explorer"}><Button color="inherit">Measures Explorer 🔎</Button></Link>
+              </Toolbar>
+            </AppBar>
           </Box>
         </Paper>
-        { (measures_loading) ? LoadingComp : MvpTableComp }
+        <p></p>
+          { (measures_loading) ? LoadingComp : MvpTableComp }
         { (measures_loading) ? LoadingComp : ExportBoxComp }
         </Container>
       </main>

@@ -18,7 +18,7 @@ import {
   Paper,
   TextField,
   Chip,
-  Skeleton
+  Skeleton, AppBar, IconButton, Typography, Toolbar
 } from "@mui/material";
 
 import { IMeasureStore, useStore } from "../store/measure_data.service";
@@ -139,6 +139,8 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
         <Chip label={"Total PI Measure Count: " + total_pi_measure_count }/>
         <Chip label={"Total IA Measure Count: " + total_ia_measure_count }/>
         <Chip label={"Total Cost Measure Count: " + total_cost_measure_count }/>
+        <br/>
+        <br/>
       </Container>
     </Paper>
   )
@@ -243,13 +245,21 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
         { HeadContent }
       </Head>
 
+      <Box sx={{ flexGrow: 1 }}>
+      </Box>
+
       <main className={styles.main}>
         <Container maxWidth="xl">
           <Paper elevation={12}>
             <Box sx={{flexGrow: 0.3}}>
-              <h2 className={styles.title}>
-                Measures Explorer 🔍
-              </h2>
+              <AppBar position="static">
+                <Toolbar>
+                  <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    Measures Explorer 🔎
+                  </Typography>
+                  <h3>Other Tools:</h3> <Link href={"/mvp-factory"}><Button color="inherit">Mvp Factory 🏭</Button></Link>
+                </Toolbar>
+              </AppBar>
             </Box>
           </Paper>
           <Paper elevation={12}>
