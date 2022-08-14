@@ -65,6 +65,7 @@ const columns = [
 const ExpandedComponent = ({ data }) => <pre>{JSON.stringify(data, null, 2)}</pre>
 
 const defaultState = {
+  fuzzy_filter: '',
   measure_filter: '',
   quality_filter: true,
   pi_filter: true,
@@ -99,6 +100,10 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setData({...data, 'measure_filter': event.target.value });
+  };
+
+  const handleFuzzySearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setData({...data, 'fuzzy_filter': event.target.value });
   };
 
   useEffect(() => {
@@ -149,10 +154,22 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
    <Paper elevation={12}>
      <Container maxWidth="xl">
      <h2><p>Filters:</p></h2>
-     <><TextField id="outlined-basic" label="Measure Id"
+     <Grid container spacing={2}>
+       <Grid item xs={6}>
+     <TextField id="outlined-basic" label="Measure Id"
                    value={data.measure_filter}
+                   fullWidth
                    onChange={handleSearchChange}
-                   variant="outlined" /></>
+                   variant="outlined" />
+       </Grid>
+       <Grid item xs={6}>
+     <TextField id="outlined-basic" label="Fuzzy Search (Comma Separated)"
+                    value={data.fuzzy_filter}
+                    fullWidth
+                    onChange={handleFuzzySearchChange}
+                    variant="outlined" />
+       </Grid>
+     </Grid>
        <p></p>
      <FormGroup row={true}>
        <FormControlLabel control={<Checkbox checked={data.quality_filter}
@@ -228,6 +245,7 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
       columns={columns}
       data={ measures
         .filter((x:any) => (data.measure_filter == '') ? true : x.measureId.includes(data.measure_filter))
+        .filter((x:any) => (data.fuzzy_filter == '') ? true : (data.fuzzy_filter.split(',').filter((str) => {return JSON.stringify(x).includes(str)})).length === data.fuzzy_filter.split(',').length)
         .filter((x:any) => (data.quality_filter) ? true : x.category != "quality" )
         .filter((x:any) => (data.pi_filter) ? true : x.category != "pi" )
         .filter((x:any) => (data.ia_filter) ? true : x.category != "ia" )
