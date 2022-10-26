@@ -1,6 +1,9 @@
-# Measures Data Explorer 🔎
+# qpp-measures-client
 
-This is a Measures Data filter tool built in NextJS as a fun tool using the public measures data. Used the standard NextJS build tool.
+This is at st multi-tool UI interface for the qpp-measures-data repo build on NextJS. This currently supports the following tools:
+
+- Measures Explorer - Web app for searching qpp-measures-data json by performance year.
+- MVP Factory - Web app for building out MVPs with form validation.
 
 ## Getting Started
 
@@ -32,11 +35,9 @@ Healthcheck can be accessed on [http://localhost:3000/api/health](http://localho
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## Tooling
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [MobX-State-Tree](https://mobx-state-tree.js.org/) - Observer pattern based store for React with good defaults.

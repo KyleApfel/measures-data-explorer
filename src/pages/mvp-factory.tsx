@@ -15,7 +15,7 @@ import {
   TextField,
   Container,
   Paper,
-  AppBar, Toolbar, IconButton, Typography
+  AppBar, Toolbar, IconButton, Typography, Grid
 } from "@mui/material";
 import { useForm } from 'react-hook-form'
 import FormControl, { useFormControl } from '@mui/material/FormControl';
@@ -118,7 +118,14 @@ const MvpFactory: NextPage<Props> = observer((props) => {
             <OutlinedInput fullWidth {...register("foundationQualityMeasureIds",{ required: true,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/})} defaultValue={data.foundationQualityMeasureIds}/>
           </label>
           <p></p>
-          <Button variant="contained" color="success" type="submit" value="Save">Submit</Button>
+          <Grid container spacing={2}>
+            <Grid item xs={11}>
+              <Button variant="contained" color="success" type="submit" value="Save">Submit</Button>
+            </Grid>
+            <Grid item xs={1}>
+              { RemoveMvpComp(data.mvpId) }
+            </Grid>
+          </Grid>
           <p></p>
         </form>
       </Box>
@@ -166,10 +173,6 @@ const MvpFactory: NextPage<Props> = observer((props) => {
       selector: (row:any) => row.foundationQualityMeasureIds.join(', '),
       sortable: false,
       wrap: true
-    },
-    {
-      name: 'Add/Remove',
-      cell: (row:any) => (AddRemoveComp(row.mvpId))
     }
   ]
   const MvpTableComp: JSX.Element = (
@@ -203,10 +206,17 @@ const MvpFactory: NextPage<Props> = observer((props) => {
     </Box>
   )
 
-  const AddRemoveComp = (id: String): JSX.Element => { return (
+  const AddMvpComp: JSX.Element = (
+    <Grid container alignItems="flex-start" direction="row" justifyContent="flex-end">
+      <Grid item xs={1} >
+        <Button variant="contained" color="success" onClick={(x) => addBlankMvp() }><strong>Create MVP</strong></Button>
+      </Grid>
+    </Grid>
+  )
+
+  const RemoveMvpComp = (id: String): JSX.Element => { return (
     <>
-      <Button size="small" variant="contained" color="success" onClick={(x) => addBlankMvp() }><h1>+</h1></Button>
-      <Button size="small" variant="contained" color="error" onClick={(x) => removeMvp(id)}><h1>-</h1></Button>
+      <Button variant="contained" color="error" onClick={(x) => removeMvp(id)}>Delete</Button>
     </>
   )}
 
@@ -218,21 +228,22 @@ const MvpFactory: NextPage<Props> = observer((props) => {
 
       <main className={styles.main}>
         <Container maxWidth="xl">
-        <Paper elevation={12}>
-          <Box sx={{flexGrow: 0.3}}>
-            <AppBar position="static">
-              <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  MVP Factory 🏭
-                </Typography>
-                <h3>Other Tools:</h3><Link href={"/measures-explorer"}><Button color="inherit">Measures Explorer 🔎</Button></Link>
-              </Toolbar>
-            </AppBar>
-          </Box>
-        </Paper>
-        <p></p>
+          <Paper elevation={12}>
+            <Box sx={{flexGrow: 0.3}}>
+              <AppBar position="static">
+                <Toolbar>
+                  <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    MVP Factory 🏭
+                  </Typography>
+                  <h3>Other Tools:</h3><Link href={"/measures-explorer"}><Button color="inherit">Measures Explorer 🔎</Button></Link>
+                </Toolbar>
+              </AppBar>
+            </Box>
+          </Paper>
+          <p></p>
           { (measures_loading) ? LoadingComp : MvpTableComp }
-        { (measures_loading) ? LoadingComp : ExportBoxComp }
+          { (measures_loading) ? LoadingComp : AddMvpComp }
+          { (measures_loading) ? LoadingComp : ExportBoxComp }
         </Container>
       </main>
       <Footer/>
