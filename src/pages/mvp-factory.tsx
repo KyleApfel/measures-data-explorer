@@ -57,7 +57,7 @@ const MvpFactory: NextPage<Props> = observer((props) => {
     const originalMvpId = d.mvpId
     d['mvpId'] = d['newMvpId']
     delete d['newMvpId']
-    d['specialtyMostApplicableTo'] = [d.specialtyMostApplicableTo]
+    d['specialtiesMostApplicableTo'] = d.specialtiesMostApplicableTo.split(',')
     d['qualityMeasureIds'] = d.qualityMeasureIds.split(',')
     d['iaMeasureIds'] = d.iaMeasureIds.split(',')
     d['costMeasureIds'] = d.costMeasureIds.split(',')
@@ -78,10 +78,6 @@ const MvpFactory: NextPage<Props> = observer((props) => {
             <OutlinedInput key={data.mvpId} fullWidth {...register("newMvpId",{ required: true })} defaultValue={data.mvpId}/>
           </label>
           <label>
-            <FormHelperText>Short Title: {errors?.shortTitle && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
-            <OutlinedInput fullWidth {...register("shortTitle",{ required: true})} defaultValue={data.shortTitle}/>
-          </label>
-          <label>
             <FormHelperText>Title: {errors?.title && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
             <OutlinedInput fullWidth {...register("title",{ required: true })} defaultValue={data.title}/>
           </label>
@@ -90,12 +86,16 @@ const MvpFactory: NextPage<Props> = observer((props) => {
             <OutlinedInput fullWidth {...register("description",{ required: true })} defaultValue={data.description}/>
           </label>
           <label>
-            <FormHelperText>Speciality Most Applicable To: {errors?.specialtyMostApplicableTo && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
-            <OutlinedInput fullWidth {...register("specialtyMostApplicableTo",{ required: true })} defaultValue={data.specialtyMostApplicableTo}/>
+            <FormHelperText>Specialities Most Applicable To (Comma Separated): {errors?.specialtiesMostApplicableTo && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("specialtiesMostApplicableTo",{ required: true,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/ })} defaultValue={data.specialtiesMostApplicableTo}/>
           </label>
           <label>
-            <FormHelperText>Clinical Topics: {errors?.clinicalTopics && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <FormHelperText>Clinical Topics: {errors?.clinicalTopic && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
             <OutlinedInput fullWidth {...register("clinicalTopics",{ required: true })} defaultValue={data.clinicalTopics}/>
+          </label>
+          <label>
+            <FormHelperText>Clinical Topic: {errors?.clinicalTopic && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("clinicalTopic",{ required: true })} defaultValue={data.clinicalTopic}/>
           </label>
           <label>
             <FormHelperText>Quality Measure Ids (Comma Separated): {errors?.qualityMeasureIds && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
@@ -129,11 +129,6 @@ const MvpFactory: NextPage<Props> = observer((props) => {
     {
       name: 'MVP Id',
       selector: (row:any) => row.mvpId,
-      sortable: true
-    },
-    {
-      name: 'Short Title',
-      selector: (row:any) => row.shortTitle,
       sortable: true
     },
     {

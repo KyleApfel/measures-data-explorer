@@ -5,11 +5,11 @@ import makeInspectable from 'mobx-devtools-mst';
 
 const defaultMvpVO = {
     mvpId: "G006X",
-    shortTitle: "",
+    clinicalTopics: "",
     title: "",
     description: "",
-    specialityMostApplicableTo: [],
-    clinicalTopics: "",
+    specialtiesMostApplicableTo: [],
+    clinicalTopic: "",
     qualityMeasuresIds: [],
     iaMeasureIds: [],
     costMeasureIds: [],
@@ -19,10 +19,10 @@ const defaultMvpVO = {
 
 const MvpVO = types.model({
     mvpId: types.string,
-    shortTitle: types.string,
+    clinicalTopic: types.string,
     title: types.string,
     description: types.string,
-    specialtyMostApplicableTo: types.array(types.string),
+    specialtiesMostApplicableTo: types.array(types.string),
     clinicalTopics: types.string,
     qualityMeasureIds: types.array(types.string),
     iaMeasureIds: types.array(types.string),
@@ -126,7 +126,7 @@ const MeasuresData = types.model("MeasuresData", {
     const getMvpData = flow(function* (performanceYear: number) {
         if (self.mvps.length !== 0 ) return
         self.measures_loading = true
-        const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/experimental/mvp_source_data/mvps/' + performanceYear + '/mvps-data.json')
+        const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/mvp/' + performanceYear + '/mvp.json')
         self.measures_loading = false
 
         self.mvps = data
