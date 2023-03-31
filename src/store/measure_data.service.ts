@@ -14,7 +14,11 @@ const defaultMvpVO = {
     iaMeasureIds: [],
     costMeasureIds: [],
     foundationPiMeasureIds: [],
-    foundationQualityMeasureIds: []
+    foundationQualityMeasureIds: [],
+    administrativeClaimsMeasureIds: [],
+    allowedVendors: [],
+    hasCahps: false,
+    hasOutcomeAdminClaims: false
 }
 
 const MvpVO = types.model({
@@ -28,7 +32,11 @@ const MvpVO = types.model({
     iaMeasureIds: types.array(types.string),
     costMeasureIds: types.array(types.string),
     foundationPiMeasureIds: types.array(types.string),
-    foundationQualityMeasureIds: types.array(types.string)
+    foundationQualityMeasureIds: types.array(types.string),
+    administrativeClaimsMeasureIds: types.array(types.string),
+    allowedVendors: types.optional(types.array(types.string), []),
+    hasCahps: types.optional(types.boolean, false),
+    hasOutcomeAdminClaims: types.optional(types.boolean, false)
 })
 
 export type iMvpVO = Instance<typeof MvpVO>
@@ -93,8 +101,9 @@ const MeasureVO = types.model({
 const MeasuresData = types.model("MeasuresData", {
     measures: types.array(MeasureVO),
     mvps: types.array(MvpVO),
-    year: 2021,
-    measures_loading: true
+    year: 2022,
+    measures_loading: true,
+    last_loaded_year: 2022
 }).views((self) => ({
     get total_measure_count() {
         return self.measures.length
@@ -123,34 +132,53 @@ const MeasuresData = types.model("MeasuresData", {
           self.year = performanceYear
       })
 
-    const getMvpData = flow(function* (performanceYear: number) {
-        if (self.mvps.length !== 0 ) return
-        self.measures_loading = true
-        const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/mvp/' + performanceYear + '/mvp.json')
-        self.measures_loading = false
+      const enrichMvpData = (mvp: any) => {
+          const hasCahps = mvp.qualityMeasureIds.includes('321')
+          const hasOutcomeAdminClaims = (mvp.administrativeClaimsMeasureIds === undefined) ? false : mvp.administrativeClaimsMeasureIds.length > 0
 
-        self.mvps = data
-    })
+          return Object.assign({}, mvp, {hasCahps, hasOutcomeAdminClaims})
+      }
 
-    const addBlankMvp = () => {
-        self.measures_loading = true
-        self.mvps.push(MvpVO.create(defaultMvpVO))
-        self.measures_loading = false
-    }
+      const getMvpData = flow(function* (performanceYear: number) {
+          if (self.last_loaded_year === performanceYear) return
+          self.measures_loading = true
+          try {
+              const {data} = yield axios.get('https://raw.githubusercontent.com/CMSgov/qpp-measures-data/develop/mvp/' + performanceYear + '/mvp.json')
+              const enrich_mvp_data = data.map((x: any) => enrichMvpData(x))
+              self.measures_loading = false
+              self.mvps = enrich_mvp_data
+          } catch {
+              self.mvps.length = 0
+              self.mvps.push(MvpVO.create(defaultMvpVO))
+              self.measures_loading = false
+          }
+      })
 
-    const removeMvp = (id: String) => {
-        self.measures_loading = true
-        // @ts-ignore
-        self.mvps = self.mvps.filter((mvp: iMvpVO) => mvp.mvpId !== id)
-        self.measures_loading = false
-    }
+      const getMvpDataFromSession = flow(function* (session: any) {
+          self.measures_loading = true
+          self.mvps = session
+          self.measures_loading = false
+      })
 
-    const updateMvp = (id: String, data: iMvpVO) => {
-        const mvpIndex = self.mvps.findIndex((element, index) => (element.mvpId === id))
-        self.mvps[mvpIndex] = MvpVO.create(data)
-    }
+      const addBlankMvp = () => {
+          self.measures_loading = true
+          self.mvps.push(MvpVO.create(defaultMvpVO))
+          self.measures_loading = false
+      }
 
-      return { getMeasuresData, getMvpData, addBlankMvp, removeMvp, updateMvp }
+      const removeMvp = (id: String) => {
+          self.measures_loading = true
+          // @ts-ignore
+          self.mvps = self.mvps.filter((mvp: iMvpVO) => mvp.mvpId !== id)
+          self.measures_loading = false
+      }
+
+      const updateMvp = (id: String, data: iMvpVO) => {
+          const mvpIndex = self.mvps.findIndex((element, index) => (element.mvpId === id))
+          self.mvps[mvpIndex] = MvpVO.create(data)
+      }
+
+      return { getMeasuresData, getMvpData, addBlankMvp, removeMvp, updateMvp, getMvpDataFromSession }
   }
 )
 

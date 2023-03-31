@@ -18,6 +18,7 @@ import {
   AppBar, Toolbar, IconButton, Typography, Grid
 } from "@mui/material";
 import { useForm } from 'react-hook-form'
+const pako = require('pako');
 import FormControl, { useFormControl } from '@mui/material/FormControl';
 
 import { IMeasureStore, useStore, iMvpVO } from "../store/measure_data.service";
@@ -29,14 +30,23 @@ interface Props {
 }
 
 const MvpFactory: NextPage<Props> = observer((props) => {
-  const { getMvpData, mvps, measures_loading, addBlankMvp, removeMvp, updateMvp} = useStore(props.store)
+  const { getMvpData, mvps, measures_loading, addBlankMvp, removeMvp, updateMvp, getMvpDataFromSession, last_loaded_year } = useStore(props.store)
   const router = useRouter();
   const performanceYear = (router.query.performanceYear != undefined) ? router.query.performanceYear : 2023
 
   useEffect(() => {
     const _year = (!router.isReady) ? 2023 : parseInt(performanceYear as string)
-    if (mvps.length == 0) getMvpData(_year)
-  }, [mvps])
+    const sessionParam = (router.query.session != undefined) ? router.query.session as string : undefined;
+
+    if (sessionParam != undefined) {
+      const compressed = Buffer.from(sessionParam, "base64");
+      const decompressed = pako.inflate(compressed, { to: "string" });
+      const jsonData = JSON.parse(decompressed);
+      getMvpDataFromSession(jsonData)
+      return
+    }
+    if (last_loaded_year != _year && sessionParam === undefined) getMvpData(_year)
+  }, [mvps, router.query.session, performanceYear])
 
   const HeadContent: JSX.Element = (
     <>
@@ -63,6 +73,10 @@ const MvpFactory: NextPage<Props> = observer((props) => {
     d['costMeasureIds'] = d.costMeasureIds.split(',')
     d['foundationPiMeasureIds'] = d.foundationPiMeasureIds.split(',')
     d['foundationQualityMeasureIds'] = d.foundationQualityMeasureIds.split(',')
+    d['allowedVendors'] = (d.allowedVendors === "") ? [] : d.allowedVendors.split(',')
+    d['administrativeClaimsMeasureIds'] = (d.administrativeClaimsMeasureIds === "") ? [] : d.administrativeClaimsMeasureIds.split(',')
+    d['hasCahps'] = d.qualityMeasureIds.includes('321')
+    d['hasOutcomeAdminClaims'] = d.administrativeClaimsMeasureIds.length > 0
     updateMvp(originalMvpId, d)
   }
 
@@ -117,6 +131,14 @@ const MvpFactory: NextPage<Props> = observer((props) => {
             <FormHelperText>Foundation Quality Measure Ids (Comma Separated): {errors?.foundationQualityMeasureIds && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
             <OutlinedInput fullWidth {...register("foundationQualityMeasureIds",{ required: true,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/})} defaultValue={data.foundationQualityMeasureIds}/>
           </label>
+          <label>
+            <FormHelperText>Administrative Outcome Measure Ids (Comma Separated): {errors?.administrativeClaimsMeasureIds && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("administrativeClaimsMeasureIds",{ required: false,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/})} defaultValue={data.administrativeClaimsMeasureIds}/>
+          </label>
+          <label>
+            <FormHelperText>Allowed Vendors (Comma Separated): {errors?.allowedVendors && (<u style={{color: "red"}}>(Required, Alphanumeric Only)</u>)}</FormHelperText>
+            <OutlinedInput fullWidth {...register("allowedVendors",{ required: false,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/})} defaultValue={data.allowedVendors}/>
+          </label>
           <p></p>
           <Grid container spacing={2}>
             <Grid item xs={11}>
@@ -170,7 +192,7 @@ const MvpFactory: NextPage<Props> = observer((props) => {
     },
     {
       name: 'System Generated Measure Ids',
-      selector: (row:any) => row.foundationQualityMeasureIds.join(', '),
+      selector: (row:any) => row.foundationQualityMeasureIds.concat(row.administrativeClaimsMeasureIds).join(', '),
       sortable: false,
       wrap: true
     }
@@ -220,6 +242,44 @@ const MvpFactory: NextPage<Props> = observer((props) => {
     </>
   )}
 
+  const SaveSessionComp = (): JSX.Element => {
+    const compressed = pako.gzip(JSON.stringify(mvps))
+    const base64_session = encodeURIComponent(Buffer.from(compressed).toString('base64'))
+    const url = `${window.location.origin}/mvp-factory.html?performanceYear=${performanceYear}&session=${base64_session}`
+
+    return (
+    <Box sx={{ flexGrow: 1, width: "60%"}}>
+      <h3>Save Session: </h3>
+      <Button variant="outlined" color="primary" onClick={() =>  navigator.clipboard.writeText(url)}>Copy To Clipboard</Button>
+      <TextField
+        id="singleline"
+        label=""
+        maxRows={1}
+        fullWidth
+        value={url}
+        variant="filled"
+      />
+    </Box>
+  )}
+
+  const PerformanceYearButtons: JSX.Element = (
+    // Make flex center buttons
+    <Paper elevation={12} style={{paddingBottom: '10px', paddingLeft: '10px', marginBottom: '5px'}}>
+      <Box sx={{ flexGrow: 1}}>
+        <h4>Select A Performance Year:</h4>
+        <Grid container spacing={0}>
+          { [2023,2024,2025].map((year) => {
+            return (
+              <Grid item xs={1} key={year}>
+                <Link href={'/mvp-factory.html?performanceYear=' + year}><Button variant="outlined" color="primary">{year}</Button></Link>
+              </Grid>
+            )
+          })}
+        </Grid>
+      </Box>
+    </Paper>
+  )
+
   return (
     <div className={styles.container}>
       <Head>
@@ -241,8 +301,10 @@ const MvpFactory: NextPage<Props> = observer((props) => {
             </Box>
           </Paper>
           <p></p>
+          { (measures_loading) ? LoadingComp : PerformanceYearButtons }
           { (measures_loading) ? LoadingComp : MvpTableComp }
           { (measures_loading) ? LoadingComp : AddMvpComp }
+          { (measures_loading) ? LoadingComp : SaveSessionComp() }
           { (measures_loading) ? LoadingComp : ExportBoxComp }
         </Container>
       </main>
@@ -250,6 +312,5 @@ const MvpFactory: NextPage<Props> = observer((props) => {
     </div>
   )
 })
-
 
 export default MvpFactory

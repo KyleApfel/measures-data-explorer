@@ -87,7 +87,7 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
   } = useStore(props.store)
 
   const router = useRouter();
-  const performanceYear = (router.query.performanceYear != undefined) ? router.query.performanceYear : 2021
+  const performanceYear = (router.query.performanceYear != undefined) ? router.query.performanceYear : 2023
 
   const [data, setData] = useState(defaultState)
 
@@ -107,7 +107,7 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
   };
 
   useEffect(() => {
-    const _year = (!router.isReady) ? 2021 : parseInt(performanceYear as string)
+    const _year = (!router.isReady) ? 2022 : parseInt(performanceYear as string)
     getMeasuresData(_year)
   }, [performanceYear])
 
@@ -123,9 +123,9 @@ const MeasuresExplorer: NextPage<Props> = observer((props) => {
     <Container sx={{ flexGrow: 1 }}>
       <h4>Select A Performance Year:</h4>
       <Grid container spacing={0}>
-        { [2017,2018,2019,2020,2021,2022].map((year) => {
+        { [2017,2018,2019,2020,2021,2022,2023,2024].map((year) => {
           return (
-            <Grid item xs={2} key={year}>
+            <Grid item xs={1} key={year}>
               <Link href={'/measures-explorer?performanceYear=' + year}><Button variant="outlined" color="primary">{year}</Button></Link>
             </Grid>
           )

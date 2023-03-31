@@ -20,6 +20,7 @@
     "mobx-react-lite": "^3.4.0",
     "mobx-state-tree": "^5.1.5",
     "next": "12.1.6",
+    "pako": "^2.1.0",
     "qpp-measures-data": "^5.5.4",
     "qpp-style": "^9.16.9",
     "react": "18.2.0",
