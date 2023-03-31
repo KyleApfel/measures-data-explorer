@@ -104,7 +104,7 @@ const MvpFactory: NextPage<Props> = observer((props) => {
           </label>
           <label>
             <FormHelperText>Specialities Most Applicable To (Comma Separated): {errors?.specialtiesMostApplicableTo && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
-            <OutlinedInput fullWidth {...register("specialtiesMostApplicableTo",{ required: true,  pattern: /^[a-zA-Z0-9_]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_]*[a-zA-Z0-9]+)*$/ })} defaultValue={data.specialtiesMostApplicableTo}/>
+            <OutlinedInput fullWidth {...register("specialtiesMostApplicableTo",{ required: true,  pattern: /^[a-zA-Z0-9_ ]*[a-zA-Z0-9]+(?:,[a-zA-Z0-9_ ]*[a-zA-Z0-9]+)*$/ })} defaultValue={data.specialtiesMostApplicableTo}/>
           </label>
           <label>
             <FormHelperText>Clinical Topics: {errors?.clinicalTopic && (<u style={{color: "red"}}>(Required)</u>)}</FormHelperText>
