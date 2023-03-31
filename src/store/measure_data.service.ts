@@ -2,6 +2,7 @@ import {types, getSnapshot, applySnapshot, Instance, flow} from "mobx-state-tree
 import axios from "axios";
 import {useMemo} from "react";
 import makeInspectable from 'mobx-devtools-mst';
+import {observable} from "mobx";
 
 const defaultMvpVO = {
     mvpId: "G006X",
@@ -156,6 +157,7 @@ const MeasuresData = types.model("MeasuresData", {
 
       const getMvpDataFromSession = flow(function* (session: any) {
           self.measures_loading = true
+          self.mvps.length = 0
           self.mvps = session
           self.measures_loading = false
       })

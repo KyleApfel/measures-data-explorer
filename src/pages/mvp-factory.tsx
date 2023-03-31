@@ -33,20 +33,23 @@ const MvpFactory: NextPage<Props> = observer((props) => {
   const { getMvpData, mvps, measures_loading, addBlankMvp, removeMvp, updateMvp, getMvpDataFromSession, last_loaded_year } = useStore(props.store)
   const router = useRouter();
   const performanceYear = (router.query.performanceYear != undefined) ? router.query.performanceYear : 2023
+  const sessionParam = (router.query.session != undefined) ? router.query.session as string : undefined;
 
   useEffect(() => {
     const _year = (!router.isReady) ? 2023 : parseInt(performanceYear as string)
-    const sessionParam = (router.query.session != undefined) ? router.query.session as string : undefined;
+    const _sessionParam = (router.query.session != undefined) ? router.query.session as string : undefined;
 
-    if (sessionParam != undefined) {
-      const compressed = Buffer.from(sessionParam, "base64");
+    if (router.isReady && last_loaded_year != _year && _sessionParam == undefined) {
+      getMvpData(_year)
+    }
+
+    if (_sessionParam != undefined) {
+      const compressed = Buffer.from(_sessionParam, "base64");
       const decompressed = pako.inflate(compressed, { to: "string" });
       const jsonData = JSON.parse(decompressed);
       getMvpDataFromSession(jsonData)
-      return
     }
-    if (last_loaded_year != _year && sessionParam === undefined) getMvpData(_year)
-  }, [mvps, router.query.session, performanceYear])
+  }, [mvps, performanceYear, sessionParam, router.isReady])
 
   const HeadContent: JSX.Element = (
     <>

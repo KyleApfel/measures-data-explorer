@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev:server": "next dev",
+    "dev:client": "nodemon ./src --ignore ./out/ --exec 'npm run build && cd ./out/ && httpster -p 3334'",
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint"
